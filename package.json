@@ -1,0 +1,7 @@
+{
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.147.0",
+    "syncano-server": "beta"
+  }
+}
