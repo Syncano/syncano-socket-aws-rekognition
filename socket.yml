@@ -1,5 +1,7 @@
 name: aws-photo-rekognition
-description: Description of aws-photo-rekognition
+description: Aws-photo-rekognition is a service that enables you to add image analysis to your applications.
+             With Rekognition, you can detect objects, scenes, and faces in images.
+             You can also search and compare faces.
 version: 0.0.1
 config:
   AWS_ACCESS_KEY_ID:
@@ -20,12 +22,28 @@ config:
 
 endpoints:
   compareFaces:
-    description: CompareFaces in uploaded images
+    description: Compares a face in the source input image with each face detected in the target input image
     parameters:
-      collectionId:
+      sourceBucketName:
         type: string
-        description: "Enter name of collection you want to create"
-        example: "Library"
+        description: "Name of the source S3 bucket"
+        example: "callen-images"
+      sourceImage:
+        type: string
+        description: "a path to the image | an image in S3 bucket image"
+        example: "abc.jpg"
+      targetBucketName:
+        type: string
+        description: "Name of the target S3 bucket"
+        example: "callen-images"
+      targetImage:
+        type: string
+        description: "a path to the image | an image in S3 bucket image"
+        example: "abc.jpg"
+      similarityThreshold:
+        type: string
+        description: "The minimum level of confidence in the face matches that a match must meet. (Optional)"
+        example: "20"
     response:
       mimetype: application/json
       examples:
@@ -34,22 +52,24 @@ endpoints:
           description: Success
           example: |
             {
-            "message": "Collection Created."
+            "message": "Comparison result."
             }
         -
           exit_code: 400
           description: Failed
           example: |
             {
-              "message": "Please Enter a CollectionId!"
+              "statusCode": 400,
+              "code": "InvalidParameterType",
+              "message": "Expected params.SimilarityThreshold to be a number"
             }
   createCollection:
     description: Create AWS Rekognition collection
     parameters:
       collectionId:
         type: string
-        description: "Enter name of collection you want to create"
-        example: "Library"
+        description: "ID for the collection that you are creating."
+        example: "callen-images"
     response:
       mimetype: application/json
       examples:
@@ -65,7 +85,9 @@ endpoints:
           description: Failed
           example: |
             {
-              "message": "Please Enter a CollectionId!"
+              "statusCode": 400,
+              "code": "ResourceAlreadyExistsException",
+              "message": "The collection id: callen-images already exists"
             }
   
   deleteCollection:
@@ -73,8 +95,8 @@ endpoints:
     parameters:
       collectionId:
         type: string
-        description: "Enter name of collection you want to delete"
-        example: "Library"
+        description: "ID of the collection to delete."
+        example: "callen-images"
     response:
       mimetype: application/json
       examples:
@@ -90,42 +112,58 @@ endpoints:
           description: Failed
           example: |
             {
-              "message": "Please Enter a CollectionId!"
+              "statusCode": 400,
+              "code": "ResourceNotFoundException",
+              "message": "The collection id: calle does not exist"
             }
 
   deleteFaces:
     description: Detect Labels in uploaded images.
-    # parameters:
-    #   image:
-    #     type: object
-    #     description: "Image should either contain bytes or s3 object."
-    #     example: "{Bytes: image} ||  {S3Object: {}"
-    # response:
-    #   mimetype: application/json
-    #   examples:
-    #     -
-    #       exit_code: 200
-    #       description: Success
-    #       example: |
-    #         {
-    #         "message": "Faces Detected"
-    #         }
-    #     -
-    #       exit_code: 400
-    #       description: Failed
-    #       example: |
-    #         {
-    #           "message": "Requested image should either contain bytes or s3 object."
-    #         }
+    parameters:
+      collectionId:
+        type: string
+        description: "Collection from which to remove the specific faces."
+        example: "callen-images"
+      faceId:
+        type: string
+        description: "Face IDs to delete."
+        example: "629e696f-0456-5bd5-aa49-50847570a653"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "Faces Detected"
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "statusCode": 400,
+              "code": "ValidationException",
+              "message": "1 validation error detected: Value '[]' at 'faceIds' failed to satisfy constraint"
+            }
 
   detectFaces:
     description: Detect faces in uploaded images.
     file: detectFaces.js
     parameters:
+      bucketName:
+        type: string
+        description: "Name of the S3 bucket"
+        example: "callen-images"
       image:
-        type: object
-        description: "Image should either contain bytes or s3 object."
-        example: "{Bytes: image} ||  {S3Object: {}"
+        type: string
+        description: "a path to the image | an image in S3 bucket image"
+        example: "abc.jpg"
+      attr:
+        type: string
+        description: " The facial attributes you want to be returned (Optional)"
+        example: "DEFAULT || ALL "
     response:
       mimetype: application/json
       examples:
@@ -142,229 +180,326 @@ endpoints:
           example: |
             {
               "message": "Requested image should either contain bytes or s3 object."
-            }
+            }      
 
   detectLabels:
     description: Detect Labels in uploaded images.
-    # parameters:
-    #   image:
-    #     type: object
-    #     description: "Image should either contain bytes or s3 object."
-    #     example: "{Bytes: image} ||  {S3Object: {}"
-    # response:
-    #   mimetype: application/json
-    #   examples:
-    #     -
-    #       exit_code: 200
-    #       description: Success
-    #       example: |
-    #         {
-    #         "message": "Faces Detected"
-    #         }
-    #     -
-    #       exit_code: 400
-    #       description: Failed
-    #       example: |
-    #         {
-    #           "message": "Requested image should either contain bytes or s3 object."
-    #         }
+    parameters:
+      bucketName:
+        type: string
+        description: "Name of the S3 bucket"
+        example: "callen-images"
+      image:
+        type: string
+        description: "a path to the image | an image in S3 bucket image"
+        example: "abc.jpg"
+      maxsLabels:
+        type: string
+        description: "Maximum number of labels you want the service to return in the response (Optional)"
+        example: "4"
+      minConfidence:
+        type: string
+        description: "Specify the minimum confidence level for the labels to return (Optional)"
+        example: "23.6"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "Faces Detected"
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "status": 400,
+              "code": "InvalidParameterException",
+              "message": "Requested image should either contain bytes or s3 object."
+            }
 
   detectModerationLabels:
     description: Detect Labels in uploaded images.
-    # parameters:
-    #   image:
-    #     type: object
-    #     description: "Image should either contain bytes or s3 object."
-    #     example: "{Bytes: image} ||  {S3Object: {}"
-    # response:
-    #   mimetype: application/json
-    #   examples:
-    #     -
-    #       exit_code: 200
-    #       description: Success
-    #       example: |
-    #         {
-    #         "message": "Faces Detected"
-    #         }
-    #     -
-    #       exit_code: 400
-    #       description: Failed
-    #       example: |
-    #         {
-    #           "message": "Requested image should either contain bytes or s3 object."
-    #         }
+    parameters:
+      bucketName:
+        type: string
+        description: "Name of the S3 bucket"
+        example: "callen-images"
+      image:
+        type: string
+        description: "a path to the image | an image in S3 bucket image"
+        example: "abc.jpg"
+      minConfidence:
+        type: string
+        description: "Specify the minimum confidence level for the labels to return (Optional)"
+        example: "23.6"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+            "message": "Moderation Labels Detected"
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "status": 400,
+              "code": "InvalidParameterException",
+              "message": "Requested image should either contain bytes or s3 object."
+            }
   
   getCelebrityInfo:
     description: Detect Labels in uploaded images.
-    # parameters:
-    #   image:
-    #     type: object
-    #     description: "Image should either contain bytes or s3 object."
-    #     example: "{Bytes: image} ||  {S3Object: {}"
-    # response:
-    #   mimetype: application/json
-    #   examples:
-    #     -
-    #       exit_code: 200
-    #       description: Success
-    #       example: |
-    #         {
-    #         "message": "Faces Detected"
-    #         }
-    #     -
-    #       exit_code: 400
-    #       description: Failed
-    #       example: |
-    #         {
-    #           "message": "Requested image should either contain bytes or s3 object."
-    #         }
+    parameters:
+      celebrityId:
+        type: string
+        description: "ID for the celebrity. You can get the celebrity ID from a call to the RecognizeCelebrities operation"
+        example: "3Ir0du6"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+            "message": "Celebrity Information"
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "code": "MissingRequiredParameter",
+              "message": "Missing required key 'Id' in params"
+            }
 
   indexFaces:
     description: Detect Labels in uploaded images.
-    # parameters:
-    #   image:
-    #     type: object
-    #     description: "Image should either contain bytes or s3 object."
-    #     example: "{Bytes: image} ||  {S3Object: {}"
-    # response:
-    #   mimetype: application/json
-    #   examples:
-    #     -
-    #       exit_code: 200
-    #       description: Success
-    #       example: |
-    #         {
-    #         "message": "Faces Detected"
-    #         }
-    #     -
-    #       exit_code: 400
-    #       description: Failed
-    #       example: |
-    #         {
-    #           "message": "Requested image should either contain bytes or s3 object."
-    #         }
+    parameters:
+      collectionId:
+        type: string
+        description: "The ID of an existing collection to which you want to add the faces that are detected in the input images."
+        example: "callen-images"
+      bucketName:
+        type: string
+        description: "Name of the S3 bucket"
+        example: "callen-images"
+      image:
+        type: string
+        description: "a path to the image | name of an image in S3 bucket image"
+        example: "abc.jpg"
+      detectionAttributes:
+        type: string
+        description: " The facial attributes you want to be returned (Optional)"
+        example: "DEFAULT || ALL "
+      externalImageId:
+        type: string
+        description: "ID you want to assign to all the faces detected in the image."
+        example: "indexed images"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+            "message": "Faces detected for indexing."
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "statusCode": 400,
+              "code": "InvalidParameterException",
+              "message": "Requested image should either contain bytes or s3 object."
+            }
 
   listCollections:
     description: Detect Labels in uploaded images.
-    # parameters:
-    #   image:
-    #     type: object
-    #     description: "Image should either contain bytes or s3 object."
-    #     example: "{Bytes: image} ||  {S3Object: {}"
-    # response:
-    #   mimetype: application/json
-    #   examples:
-    #     -
-    #       exit_code: 200
-    #       description: Success
-    #       example: |
-    #         {
-    #         "message": "Faces Detected"
-    #         }
-    #     -
-    #       exit_code: 400
-    #       description: Failed
-    #       example: |
-    #         {
-    #           "message": "Requested image should either contain bytes or s3 object."
-    #         }
+    parameters:
+      maxResults:
+        type: string
+        description: "Maximum number of collection IDs to return. (Optional)"
+        example: "5"
+      nextTokens:
+        type: object
+        description: "Pagination token from the previous response. (Optional)"
+        example: "token"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+            "message": "Faces Detected"
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "status": 400,
+              "code": "InvalidPaginationTokenException",
+              "message": null
+            }
 
   listFaces:
     description: Detect Labels in uploaded images.
-    # parameters:
-    #   image:
-    #     type: object
-    #     description: "Image should either contain bytes or s3 object."
-    #     example: "{Bytes: image} ||  {S3Object: {}"
-    # response:
-    #   mimetype: application/json
-    #   examples:
-    #     -
-    #       exit_code: 200
-    #       description: Success
-    #       example: |
-    #         {
-    #         "message": "Faces Detected"
-    #         }
-    #     -
-    #       exit_code: 400
-    #       description: Failed
-    #       example: |
-    #         {
-    #           "message": "Requested image should either contain bytes or s3 object."
-    #         }
+    parameters:
+      collectionId:
+        type: string
+        description: "ID of the collection from which to list the faces."
+        example: "callen-images"
+      maxResults:
+        type: string
+        description: "Maximum number of collection IDs to return.(Optional)"
+        example: "5"
+      nextTokens:
+        type: object
+        description: "Pagination token from the previous response. (Optional)"
+        example: "token"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+            "message": "Faces Detected"
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "statusCode": 400,
+              "code": "MissingRequiredParameter",
+              "message": "Missing required key 'CollectionId' in params"
+            }
 
   recognizeCelebrities:
     description: Detect Labels in uploaded images.
-    # parameters:
-    #   image:
-    #     type: object
-    #     description: "Image should either contain bytes or s3 object."
-    #     example: "{Bytes: image} ||  {S3Object: {}"
-    # response:
-    #   mimetype: application/json
-    #   examples:
-    #     -
-    #       exit_code: 200
-    #       description: Success
-    #       example: |
-    #         {
-    #         "message": "Faces Detected"
-    #         }
-    #     -
-    #       exit_code: 400
-    #       description: Failed
-    #       example: |
-    #         {
-    #           "message": "Requested image should either contain bytes or s3 object."
-    #         }
+    parameters:
+      bucketName:
+        type: string
+        description: "Name of the S3 bucket"
+        example: "callen-images"
+      image:
+        type: string
+        description: "a path to the image | name of an image in S3 bucket image"
+        example: "abc.jpg"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+            "message": "Recognized Celebrity Information"
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "status": 400,
+              "code": "InvalidParameterException",
+              "message": "Requested image should either contain bytes or s3 object." 
+            }
 
   searchFaces:
     description: Detect Labels in uploaded images.
-    # parameters:
-    #   image:
-    #     type: object
-    #     description: "Image should either contain bytes or s3 object."
-    #     example: "{Bytes: image} ||  {S3Object: {}"
-    # response:
-    #   mimetype: application/json
-    #   examples:
-    #     -
-    #       exit_code: 200
-    #       description: Success
-    #       example: |
-    #         {
-    #         "message": "Faces Detected"
-    #         }
-    #     -
-    #       exit_code: 400
-    #       description: Failed
-    #       example: |
-    #         {
-    #           "message": "Requested image should either contain bytes or s3 object."
-    #         }
+    parameters:
+      collectionId:
+        type: string
+        description: "ID of the collection the face belongs to."
+        example: "callen-imaged"
+      faceId:
+        type: string
+        description: "ID of a face to find matches for in the collection."
+        example: "629e696f-0456-5bd5-aa49-50847570a653"
+      faceMatchThreshold:
+        type: string
+        description: "Specify the minimum confidence in the face match to return. (Optional)"
+        example: "1.50"
+      MaxFaces:
+        type: string
+        description: "Maximum number of faces to return. (Optional)"
+        example: "10"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+            "message": "Faces Found."
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "statusCode": 400,
+              "code": "MissingRequiredParameter",
+              "message": "Missing required key 'FaceId' in params"
+            }
 
   searchFacesByImage:
     description: Detect Labels in uploaded images.
-    # parameters:
-    #   image:
-    #     type: object
-    #     description: "Image should either contain bytes or s3 object."
-    #     example: "{Bytes: image} ||  {S3Object: {}"
-    # response:
-    #   mimetype: application/json
-    #   examples:
-    #     -
-    #       exit_code: 200
-    #       description: Success
-    #       example: |
-    #         {
-    #         "message": "Faces Detected"
-    #         }
-    #     -
-    #       exit_code: 400
-    #       description: Failed
-    #       example: |
-    #         {
-    #           "message": "Requested image should either contain bytes or s3 object."
-    #         }
+    parameters:
+      bucketName:
+        type: string
+        description: "Name of the S3 bucket"
+        example: "callen-images"
+      image:
+        type: string
+        description: "a path to the image | name of an image in S3 bucket image"
+        example: "abc.jpg"
+      collectionId:
+        type: string
+        description: "ID of the collection to search."
+        example: "callen-images"
+      faceMatchThreshold:
+        type: string
+        description: "Specify the minimum confidence in the face match to return. (Optional)"
+        example: "1.50"
+      MaxFaces:
+        type: string
+        description: "Maximum number of faces to return. (Optional)"
+        example: "10"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+            "message": "Faces Detected"
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "statusCode": 400,
+              "code": "InvalidParameterException",
+              "message": "Requested image should either contain bytes or s3 object."
+            }

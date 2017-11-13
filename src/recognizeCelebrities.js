@@ -1,6 +1,6 @@
 import AWS from "aws-sdk";
 import Syncano from "syncano-server";
-import helper from "./helper";
+import helper from "./util/helper";
 
 export default ctx => {
   const { response, logger } = Syncano(ctx);
@@ -9,20 +9,23 @@ export default ctx => {
 
   const rekognitionHelper = new helper(ctx.config);
 
-  const recognizedCelebrities = rekognitionHelper.recognizeCelebrities(
-    ctx.args.image
+  const uploadedImage = rekognitionHelper.confirmImage(
+    ctx.args.image,
+    ctx.args.bucketName
   );
 
-  recognizedCelebrities
+  const recognizedCelebrities = rekognitionHelper
+    .recognizeCelebrities(uploadedImage)
     .then(function(data) {
       response.json({
-        message: "Recognized Celebrity Faces",
+        message: "Recognized Celebrity Information",
         data
       });
     })
     .catch(function(err) {
       response.json({
         status: err.statusCode,
+        code: err.code,
         message: err.message
       });
     });

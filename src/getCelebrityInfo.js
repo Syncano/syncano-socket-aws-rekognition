@@ -1,6 +1,6 @@
 import AWS from "aws-sdk";
 import Syncano from "syncano-server";
-import helper from "./helper";
+import helper from "./util/helper";
 
 export default ctx => {
   const { response, logger } = Syncano(ctx);
@@ -22,7 +22,7 @@ export default ctx => {
     })
     .catch(function(err) {
       response.json({
-        status: err.statusCode,
+        code: err.code,
         message: err.message
       });
     });

@@ -1,4 +1,7 @@
 import AWS from "aws-sdk";
+import fs from "fs";
+
+const path = require("path");
 
 class helper {
   constructor(configDetails) {
@@ -9,9 +12,28 @@ class helper {
     });
   }
 
-  checkImage(image) {}
+  confirmImage(image, bucketName) {
+    return bucketName !== null
+      ? {
+          S3Object: {
+            Bucket: bucketName,
+            Name: image
+          }
+        }
+      : {
+          Bytes: fs.readFileSync(image)
+        };
+  }
 
-  compareFaces() {}
+  compareFaces(sourceUploadedImage, targetUploadedImage, similarityThreshold) {
+    return this.rekognition
+      .compareFaces({
+        SimilarityThreshold: similarityThreshold,
+        SourceImage: sourceUploadedImage,
+        TargetImage: targetUploadedImage
+      })
+      .promise();
+  }
 
   createCollection(collectionId) {
     return this.rekognition
@@ -29,51 +51,56 @@ class helper {
     return this.rekognition
       .deleteFaces({
         CollectionId: collectionId,
-        FaceIds: faceIds
+        FaceIds: [faceIds]
       })
       .promise();
   }
 
-  detectFaces(image, attr) {
+  detectFaces(uploadeds3Image, attr) {
     return this.rekognition
       .detectFaces({
-        Attributes: attr || null,
-        Image: image
+        Attributes: [attr] || attr.length < 1,
+        Image: uploadeds3Image
       })
       .promise();
   }
 
-  detectLabels(image, maxsLabels, minConfidence) {
+  detectLabels(uploadeds3Image, maxsLabels, minConfidence) {
     return this.rekognition
       .detectLabels({
-        Image: image,
+        Image: uploadeds3Image,
         MaxLabels: maxsLabels || null,
         MinConfidence: minConfidence || null
       })
       .promise();
   }
 
-  detectModerationLabels(image, minConfidence) {
+  detectModerationLabels(uploadeds3Image, minConfidence) {
     return this.rekognition
       .detectModerationLabels({
-        Image: image,
+        Image: uploadeds3Image,
         MinConfidence: minConfidence || null
       })
       .promise();
   }
 
-  getCelebrityInfo(celebRecognitionId) {
+  getCelebrityInfo(celebInfoId) {
     return this.rekognition
       .getCelebrityInfo({
-        Id: celebRecognitionId
+        Id: celebInfoId
       })
       .promise();
   }
 
-  indexFaces(collectionId, image, detectionAttributes, externalImageId) {
+  indexFaces(
+    collectionId,
+    uploadedImage,
+    detectionAttributes,
+    externalImageId
+  ) {
     return this.rekognition
       .indexFaces({
-        Image: image,
+        Image: uploadedImage,
         CollectionId: collectionId,
         DetectionAttributes: [detectionAttributes] || null,
         ExternalImageId: externalImageId || null
@@ -99,10 +126,10 @@ class helper {
       })
       .promise();
   }
-  recognizeCelebrities(image) {
+  recognizeCelebrities(uploadedImage) {
     return this.rekognition
       .recognizeCelebrities({
-        Image: image
+        Image: uploadedImage
       })
       .promise();
   }
@@ -118,10 +145,15 @@ class helper {
       .promise();
   }
 
-  searchFacesByImage(collectionId, faceMatchThreshold, image, maxFaces) {
+  searchFacesByImage(
+    collectionId,
+    faceMatchThreshold,
+    uploadedImage,
+    maxFaces
+  ) {
     return this.rekognition
       .searchFacesByImage({
-        Image: image,
+        Image: uploadedImage,
         CollectionId: collectionId
       })
       .promise();

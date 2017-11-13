@@ -1,6 +1,6 @@
 import AWS from "aws-sdk";
 import Syncano from "syncano-server";
-import helper from "./helper";
+import helper from "./util/helper";
 
 export default ctx => {
   const { response, logger } = Syncano(ctx);
@@ -9,12 +9,13 @@ export default ctx => {
 
   const rekognitionHelper = new helper(ctx.config);
 
-  const detectedFaces = rekognitionHelper.detectFaces(
+  const uploadedS3Image = rekognitionHelper.confirmImage(
     ctx.args.image,
-    ctx.args.attr
+    ctx.args.bucketName
   );
 
-  detectedFaces
+  const detectedFaces = rekognitionHelper
+    .detectFaces(uploadedS3Image, ctx.args.attr)
     .then(function(data) {
       response.json({
         message: "Faces Detected",
@@ -23,8 +24,9 @@ export default ctx => {
     })
     .catch(function(err) {
       response.json({
-        statusCode: err.statusCode,
-        message: "Requested image should either contain bytes or s3 object."
+        statusCode: 400,
+        code: err.code,
+        message: err.message
       });
     });
 };
