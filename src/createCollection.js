@@ -13,8 +13,9 @@ export default ctx => {
     ctx.args.collectionId
   );
 
-  createdCollection
+  return createdCollection
     .then(function(data) {
+      log.info(data);
       response.json({
         statusCode: data.StatusCode,
         message: "Collection Created."

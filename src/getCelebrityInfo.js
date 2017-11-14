@@ -10,10 +10,10 @@ export default ctx => {
   const rekognitionHelper = new helper(ctx.config);
 
   const celebrityInfo = rekognitionHelper.getCelebrityInfo(
-    ctx.config.celebrityId
+    ctx.args.celebrityId
   );
 
-  celebrityInfo
+  return celebrityInfo
     .then(function(data) {
       response.json({
         message: "Celebrity Information",

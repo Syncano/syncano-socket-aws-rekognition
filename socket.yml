@@ -209,7 +209,7 @@ endpoints:
           description: Success
           example: |
             {
-              "message": "Faces Detected"
+              "message": "Labels Detected"
             }
         -
           exit_code: 400
@@ -244,7 +244,7 @@ endpoints:
           description: Success
           example: |
             {
-            "message": "Moderation Labels Detected"
+            "message": "Moderation Labels Detected."
             }
         -
           exit_code: 400
@@ -333,7 +333,7 @@ endpoints:
         description: "Maximum number of collection IDs to return. (Optional)"
         example: "5"
       nextTokens:
-        type: object
+        type: string
         description: "Pagination token from the previous response. (Optional)"
         example: "token"
     response:
@@ -368,7 +368,7 @@ endpoints:
         description: "Maximum number of collection IDs to return.(Optional)"
         example: "5"
       nextTokens:
-        type: object
+        type: string
         description: "Pagination token from the previous response. (Optional)"
         example: "token"
     response:

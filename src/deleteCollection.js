@@ -13,7 +13,7 @@ export default ctx => {
     ctx.args.collectionId
   );
 
-  deletedCollection
+  return deletedCollection
     .then(function(data) {
       response.json({
         statusCode: data.StatusCode,

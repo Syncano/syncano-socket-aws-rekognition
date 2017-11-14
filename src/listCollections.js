@@ -14,7 +14,7 @@ export default ctx => {
     ctx.args.nextTokens
   );
 
-  listedCollections
+  return listedCollections
     .then(function(data) {
       response.json({
         message: "List of Collection IDs.",

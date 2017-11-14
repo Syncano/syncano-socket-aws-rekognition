@@ -19,12 +19,12 @@ export default ctx => {
     ctx.args.targetBucketName
   );
 
-  const detectedFaces = rekognitionHelper
-    .compareFaces(
-      sourceUploadedImage,
-      targetUploadedImage,
-      ctx.args.similarityThreshold
-    )
+  const comparedFaces = rekognitionHelper.compareFaces(
+    sourceUploadedImage,
+    targetUploadedImage,
+    ctx.args.similarityThreshold
+  );
+  return comparedFaces
     .then(function(data) {
       response.json({
         message: "Faces Detected",
@@ -32,7 +32,6 @@ export default ctx => {
       });
     })
     .catch(function(err) {
-      log.info(err);
       response.json({
         statusCode: err.statusCode || 400,
         code: err.code,

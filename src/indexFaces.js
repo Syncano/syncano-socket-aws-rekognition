@@ -23,13 +23,13 @@ export default ctx => {
 
   return indexedFaces
     .then(function(data) {
-      response.json({
+      return response.json({
         message: "Faces detected for indexing.",
         data
       });
     })
     .catch(function(err) {
-      response.json({
+      return response.json({
         statusCode: err.statusCode,
         code: err.code,
         message: err.message

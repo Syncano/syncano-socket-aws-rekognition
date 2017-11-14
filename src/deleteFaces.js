@@ -14,7 +14,7 @@ export default ctx => {
     ctx.args.faceId
   );
 
-  deletedFaces
+  return deletedFaces
     .then(function(data) {
       response.json({
         message: "Deleted Faces.",

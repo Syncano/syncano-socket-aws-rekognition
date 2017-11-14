@@ -12,11 +12,11 @@ export default ctx => {
   const searchedFaces = rekognitionHelper.searchFaces(
     ctx.args.collectionId,
     ctx.args.faceId,
-    parseFloat(ctx.args.faceMatchThreshold),
-    Number(ctx.args.maxFaces)
+    ctx.args.faceMatchThreshold,
+    ctx.args.maxFaces
   );
 
-  searchedFaces
+  return searchedFaces
     .then(function(data) {
       response.json({
         message: "Faces found.",

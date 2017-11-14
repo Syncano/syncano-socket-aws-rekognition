@@ -9,13 +9,16 @@ export default ctx => {
 
   const rekognitionHelper = new helper(ctx.config);
 
-  const uploadedS3Image = rekognitionHelper.confirmImage(
+  const uploadedImage = rekognitionHelper.confirmImage(
     ctx.args.image,
     ctx.args.bucketName
   );
 
-  const detectedFaces = rekognitionHelper
-    .detectFaces(uploadedS3Image, ctx.args.attr)
+  const detectedFaces = rekognitionHelper.detectFaces(
+    uploadedImage,
+    ctx.args.attr
+  );
+  return detectedFaces
     .then(function(data) {
       response.json({
         message: "Faces Detected",

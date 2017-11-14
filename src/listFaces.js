@@ -15,7 +15,7 @@ export default ctx => {
     ctx.args.nextToken
   );
 
-  listedFaces
+  return listedFaces
     .then(function(data) {
       log.info(data);
       response.json({

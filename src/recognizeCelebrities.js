@@ -14,8 +14,10 @@ export default ctx => {
     ctx.args.bucketName
   );
 
-  const recognizedCelebrities = rekognitionHelper
-    .recognizeCelebrities(uploadedImage)
+  const recognizedCelebrities = rekognitionHelper.recognizeCelebrities(
+    uploadedImage
+  );
+  return recognizedCelebrities
     .then(function(data) {
       response.json({
         message: "Recognized Celebrity Information",

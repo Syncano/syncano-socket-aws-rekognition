@@ -56,29 +56,29 @@ class helper {
       .promise();
   }
 
-  detectFaces(uploadeds3Image, attr) {
+  detectFaces(uploadedImage, attr) {
     return this.rekognition
       .detectFaces({
         Attributes: [attr] || attr.length < 1,
-        Image: uploadeds3Image
+        Image: uploadedImage
       })
       .promise();
   }
 
-  detectLabels(uploadeds3Image, maxsLabels, minConfidence) {
+  detectLabels(uploadedImage, maxsLabels, minConfidence) {
     return this.rekognition
       .detectLabels({
-        Image: uploadeds3Image,
+        Image: uploadedImage,
         MaxLabels: maxsLabels || null,
         MinConfidence: minConfidence || null
       })
       .promise();
   }
 
-  detectModerationLabels(uploadeds3Image, minConfidence) {
+  detectModerationLabels(uploadedImage, minConfidence) {
     return this.rekognition
       .detectModerationLabels({
-        Image: uploadeds3Image,
+        Image: uploadedImage,
         MinConfidence: minConfidence || null
       })
       .promise();
