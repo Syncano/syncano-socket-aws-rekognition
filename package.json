@@ -2,19 +2,31 @@
   "license": "MIT",
   "dependencies": {
     "aws-sdk": "^2.147.0",
+    "b64-to-blob": "^1.2.19",
+    "mkdirp": "^0.5.1",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
     "syncano-server": "beta"
   },
   "scripts": {
     "test": "mocha --compilers js:babel-core/register test/*.js --timeout 15000"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.2",
     "babel-loader": "^6.4.1",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-es2015": "^6.24.1",
     "babel-register": "^6.26.0",
     "chai": "^4.1.2",
+    "eslint": "^4.11.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-chai-friendly": "^0.4.0",
+    "eslint-plugin-import": "^2.8.0",
+    "form-data": "^2.3.1",
     "mocha": "^4.0.1",
+    "prettier-eslint": "^8.2.2",
     "syncano-test": "^0.3.3"
   }
 }

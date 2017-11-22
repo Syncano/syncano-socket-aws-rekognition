@@ -1,30 +1,28 @@
-import AWS from "aws-sdk";
-import Syncano from "syncano-server";
-import helper from "./util/helper";
+import AWS from 'aws-sdk';
+import Syncano from 'syncano-server';
+import helper from './util/helper';
 
-export default ctx => {
+export default (ctx) => {
   const { response, logger } = Syncano(ctx);
 
-  const log = logger("Socket scope");
+  const log = logger('Socket scope');
 
   const rekognitionHelper = new helper(ctx.config);
 
-  const deletedCollection = rekognitionHelper.deleteCollection(
-    ctx.args.collectionId
-  );
+  const deletedCollection = rekognitionHelper.deleteCollection(ctx.args.collectionId);
 
   return deletedCollection
-    .then(function(data) {
+    .then((data) => {
       response.json({
         statusCode: data.StatusCode,
-        message: "Collection Deleted."
+        message: 'Collection Deleted.',
       });
     })
-    .catch(function(err) {
+    .catch((err) => {
       response.json({
         statusCode: err.statusCode,
         code: err.code,
-        message: err.message
+        message: err.message,
       });
     });
 };

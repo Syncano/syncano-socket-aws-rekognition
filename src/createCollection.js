@@ -1,31 +1,28 @@
-import AWS from "aws-sdk";
-import Syncano from "syncano-server";
-import helper from "./util/helper";
+import AWS from 'aws-sdk';
+import Syncano from 'syncano-server';
+import helper from './util/helper';
 
-export default ctx => {
+export default (ctx) => {
   const { response, logger } = Syncano(ctx);
 
-  const log = logger("Socket scope");
+  const log = logger('Socket scope');
 
   const rekognitionHelper = new helper(ctx.config);
 
-  const createdCollection = rekognitionHelper.createCollection(
-    ctx.args.collectionId
-  );
+  const createdCollection = rekognitionHelper.createCollection(ctx.args.collectionId);
 
   return createdCollection
-    .then(function(data) {
-      log.info(data);
+    .then((data) => {
       response.json({
         statusCode: data.StatusCode,
-        message: "Collection Created."
+        message: 'Collection Created.',
       });
     })
-    .catch(function(err) {
+    .catch((err) => {
       response.json({
         statusCode: err.statusCode,
         code: err.code,
-        message: err.message
+        message: err.message,
       });
     });
 };

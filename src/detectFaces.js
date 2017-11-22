@@ -1,35 +1,32 @@
-import AWS from "aws-sdk";
-import Syncano from "syncano-server";
-import helper from "./util/helper";
+import AWS from 'aws-sdk';
+import Syncano from 'syncano-server';
+import helper from './util/helper';
 
-export default ctx => {
+export default (ctx) => {
   const { response, logger } = Syncano(ctx);
 
-  const log = logger("Socket scope");
+  const log = logger('Socket scope');
 
   const rekognitionHelper = new helper(ctx.config);
 
-  const uploadedImage = rekognitionHelper.confirmImage(
+  const detectedFaces = rekognitionHelper.detectFaces(
     ctx.args.image,
-    ctx.args.bucketName
+    ctx.args.bucketName,
+    ctx.args.attr,
   );
 
-  const detectedFaces = rekognitionHelper.detectFaces(
-    uploadedImage,
-    ctx.args.attr
-  );
   return detectedFaces
-    .then(function(data) {
+    .then((data) => {
       response.json({
-        message: "Faces Detected",
-        data
+        message: 'Faces Detected',
+        data,
       });
     })
-    .catch(function(err) {
+    .catch((err) => {
       response.json({
         statusCode: 400,
         code: err.code,
-        message: err.message
+        message: err.message,
       });
     });
 };

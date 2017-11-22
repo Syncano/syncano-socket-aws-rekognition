@@ -7,5 +7,9 @@ export region=
 export bucketName=
 
 export randomImage=
+export uploadedImage= should be an image URL 
 export moderationImage=
 export celebritiesImage=
+
+
+export invalidUrl=

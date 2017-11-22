@@ -22,11 +22,11 @@ config:
 
 endpoints:
   compareFaces:
-    description: Compares a face in the source input image with each face detected in the target input image
+    description: Compares a face in the source image with each face detected in the target input image
     parameters:
       sourceBucketName:
         type: string
-        description: "Name of the source S3 bucket"
+        description: "Name of the source S3 bucket (Optional)"
         example: "callen-images"
       sourceImage:
         type: string
@@ -34,7 +34,7 @@ endpoints:
         example: "abc.jpg"
       targetBucketName:
         type: string
-        description: "Name of the target S3 bucket"
+        description: "Name of the target S3 bucket (Optional)"
         example: "callen-images"
       targetImage:
         type: string
@@ -53,6 +53,7 @@ endpoints:
           example: |
             {
             "message": "Comparison result."
+            "data": {}
             }
         -
           exit_code: 400
@@ -78,7 +79,8 @@ endpoints:
           description: Success
           example: |
             {
-            "message": "Collection Created."
+              "statusCode": 200,
+              "message": "Collection Created."
             }
         -
           exit_code: 400
@@ -105,7 +107,8 @@ endpoints:
           description: Success
           example: |
             {
-            "message": "Collection Deleted."
+              "statusCode": 200,
+              "message": "Collection Deleted."
             }
         -
           exit_code: 400
@@ -136,7 +139,8 @@ endpoints:
           description: Success
           example: |
             {
-              "message": "Faces Detected"
+              "message": "Faces Detected",
+              "DeletedFaces":[ "11111111-2222-3333-4444-555555555555"]
             }
         -
           exit_code: 400
@@ -154,7 +158,7 @@ endpoints:
     parameters:
       bucketName:
         type: string
-        description: "Name of the S3 bucket"
+        description: "Name of the S3 bucket (Optional)."
         example: "callen-images"
       image:
         type: string
@@ -173,13 +177,18 @@ endpoints:
           example: |
             {
             "message": "Faces Detected"
+            "data": {
+                      "FaceDetails": []
+                    }
             }
         -
           exit_code: 400
           description: Failed
           example: |
             {
-              "message": "Requested image should either contain bytes or s3 object."
+              "statusCode": 400,
+              "code": "InvalidParameterException",
+              "message": "Request has Invalid Parameters"
             }      
 
   detectLabels:
@@ -187,7 +196,7 @@ endpoints:
     parameters:
       bucketName:
         type: string
-        description: "Name of the S3 bucket"
+        description: "Name of the S3 bucket (Optional)."
         example: "callen-images"
       image:
         type: string
@@ -209,7 +218,10 @@ endpoints:
           description: Success
           example: |
             {
-              "message": "Labels Detected"
+              "message": "Labels Detected",
+              "data": {
+                        "Labels": []
+                      }
             }
         -
           exit_code: 400
@@ -222,11 +234,11 @@ endpoints:
             }
 
   detectModerationLabels:
-    description: Detect Labels in uploaded images.
+    description: Detects explicit or suggestive adult content in a specified JPEG or PNG format image.
     parameters:
       bucketName:
         type: string
-        description: "Name of the S3 bucket"
+        description: "Name of the S3 bucket (Optional)." 
         example: "callen-images"
       image:
         type: string
@@ -245,6 +257,9 @@ endpoints:
           example: |
             {
             "message": "Moderation Labels Detected."
+            "data": {
+                      "ModerationLabels": []
+                    }
             }
         -
           exit_code: 400
@@ -257,7 +272,7 @@ endpoints:
             }
   
   getCelebrityInfo:
-    description: Detect Labels in uploaded images.
+    description: Gets the name and additional information about a celebrity based on his or her Rekognition ID.
     parameters:
       celebrityId:
         type: string
@@ -272,6 +287,7 @@ endpoints:
           example: |
             {
             "message": "Celebrity Information"
+            "data": {}
             }
         -
           exit_code: 400
@@ -283,7 +299,7 @@ endpoints:
             }
 
   indexFaces:
-    description: Detect Labels in uploaded images.
+    description: Detects faces in the input image and adds them to the specified collection.
     parameters:
       collectionId:
         type: string
@@ -291,7 +307,7 @@ endpoints:
         example: "callen-images"
       bucketName:
         type: string
-        description: "Name of the S3 bucket"
+        description: "Name of the S3 bucket (Optional)."
         example: "callen-images"
       image:
         type: string
@@ -314,6 +330,9 @@ endpoints:
           example: |
             {
             "message": "Faces detected for indexing."
+            "data": {
+                      "FaceRecords": []
+                    }
             }
         -
           exit_code: 400
@@ -326,7 +345,7 @@ endpoints:
             }
 
   listCollections:
-    description: Detect Labels in uploaded images.
+    description: Returns list of collection IDs in your account.
     parameters:
       maxResults:
         type: string
@@ -345,6 +364,9 @@ endpoints:
           example: |
             {
             "message": "Faces Detected"
+            "data": {
+                      "CollectionIds": []
+                    }
             }
         -
           exit_code: 400
@@ -357,7 +379,7 @@ endpoints:
             }
 
   listFaces:
-    description: Detect Labels in uploaded images.
+    description: Returns metadata for faces in the specified collection.
     parameters:
       collectionId:
         type: string
@@ -379,7 +401,10 @@ endpoints:
           description: Success
           example: |
             {
-            "message": "Faces Detected"
+            "message": "Faces Detected",
+            "data": {
+                      "Faces": []
+                    }
             }
         -
           exit_code: 400
@@ -392,11 +417,11 @@ endpoints:
             }
 
   recognizeCelebrities:
-    description: Detect Labels in uploaded images.
+    description: Returns an array of celebrities recognized in the input image.
     parameters:
       bucketName:
         type: string
-        description: "Name of the S3 bucket"
+        description: "Name of the S3 bucket (Optional)."
         example: "callen-images"
       image:
         type: string
@@ -411,6 +436,9 @@ endpoints:
           example: |
             {
             "message": "Recognized Celebrity Information"
+            "data": {
+                      "CelebrityFaces": []
+                    }
             }
         -
           exit_code: 400
@@ -423,12 +451,12 @@ endpoints:
             }
 
   searchFaces:
-    description: Detect Labels in uploaded images.
+    description: Searches for matching faces in the collection the face belongs to.
     parameters:
       collectionId:
         type: string
         description: "ID of the collection the face belongs to."
-        example: "callen-imaged"
+        example: "callen-images"
       faceId:
         type: string
         description: "ID of a face to find matches for in the collection."
@@ -450,6 +478,7 @@ endpoints:
           example: |
             {
             "message": "Faces Found."
+            "data": {}
             }
         -
           exit_code: 400
@@ -462,11 +491,11 @@ endpoints:
             }
 
   searchFacesByImage:
-    description: Detect Labels in uploaded images.
+    description: Detects the largest face in the image, and then searches the specified collection for matching faces.
     parameters:
       bucketName:
         type: string
-        description: "Name of the S3 bucket"
+        description: "Name of the S3 bucket (Optional)."
         example: "callen-images"
       image:
         type: string
@@ -493,6 +522,7 @@ endpoints:
           example: |
             {
             "message": "Faces Detected"
+            "data": {}
             }
         -
           exit_code: 400
