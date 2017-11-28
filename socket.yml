@@ -1,7 +1,9 @@
-name: aws-photo-rekognition
-description: Aws-photo-rekognition is a service that enables you to add image analysis to your applications.
-             With Rekognition, you can detect objects, scenes, and faces in images.
-             You can also search and compare faces.
+name: aws-photo-rekognition1
+description: Amazon Rekognition Integration
+long_description: |
+  Aws-photo-rekognition is a service that enables you to add image analysis to your applications.
+  With Rekognition, you can detect objects, scenes, and faces in images.
+  You can also search and compare faces.
 version: 0.0.1
 config:
   AWS_ACCESS_KEY_ID:
