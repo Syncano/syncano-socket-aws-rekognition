@@ -1,4 +1,4 @@
-name: aws-photo-rekognition1
+name: aws-photo-rekognition
 description: Amazon Rekognition Integration
 long_description: |
   Aws-photo-rekognition is a service that enables you to add image analysis to your applications.
@@ -123,7 +123,7 @@ endpoints:
             }
 
   deleteFaces:
-    description: Detect Labels in uploaded images.
+    description: Deletes Faces in uploaded images.
     parameters:
       collectionId:
         type: string
