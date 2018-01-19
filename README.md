@@ -69,5 +69,5 @@ To view socket endpoints and corresponding parameters, kindly visit [here](https
 
 #### Testing
 
-* Test are written in the `test` directory
-* Use the command `npm test` to run test
+* Ensure all your tests are written in the `test` directory
+* Use the command `npm test` to run tests
