@@ -570,3 +570,4 @@ mimetype: `application/json`
 
 * Test are written in the `test` directory
 * Use the command `npm test` to run test
+

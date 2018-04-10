@@ -1,4 +1,11 @@
-.DS_Store
 .dist/
 node_modules/
 .npmignore
+.idea/
+coverage/
+**/scripts/.bundles
+.DS_STORE
+.envrc
+.env
+.nyc_output/
+.DS_Store
