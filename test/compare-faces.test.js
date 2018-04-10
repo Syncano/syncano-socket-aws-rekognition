@@ -20,7 +20,6 @@ describe('Compare Faces ', () => {
       },
       config })
       .then(({ data: response }) => {
-        console.log(response.data.FaceMatches, '......');
         assert.property(response, 'message', 'Faces Detected');
         assert.property(response.data, 'FaceMatches');
         assert.isNotEmpty(response.data.FaceMatches);

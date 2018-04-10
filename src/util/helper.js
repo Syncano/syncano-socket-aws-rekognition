@@ -90,15 +90,12 @@ class helper {
     similarityThreshold,
   ) {
     try {
-      const args = {
-        SourceImage: await helper.confirmImage(sourceUploadedImage, sourceBucketName),
-        TargetImage: await helper.confirmImage(targetUploadedImage, targetBucketName)
-      };
-      if (similarityThreshold) {
-        args.SimilarityThreshold = similarityThreshold;
-      }
       return this.rekognition
-        .compareFaces(args)
+        .compareFaces({
+          SimilarityThreshold: similarityThreshold,
+          SourceImage: await helper.confirmImage(sourceUploadedImage, sourceBucketName),
+          TargetImage: await helper.confirmImage(targetUploadedImage, targetBucketName),
+        })
         .promise();
     } catch (err) {
       return Promise.reject(err);
