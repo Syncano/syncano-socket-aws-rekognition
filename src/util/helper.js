@@ -1,8 +1,6 @@
-import AWS, { Rekognition } from 'aws-sdk';
+import AWS from 'aws-sdk';
 import fs from 'fs';
-import Syncano from 'syncano-server';
 import request from 'request';
-// var request = require("request").defaults({ encoding: null });
 
 /** Class respresenting AWS rekognition actions */
 class helper {
@@ -11,11 +9,11 @@ class helper {
    *
    * @param {Object} configDetails - Contains the AWS configuration parameters
    */
-  constructor(configDetails) {
+  constructor({ AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION }) {
     this.rekognition = new AWS.Rekognition({
-      accessKeyId: configDetails.AWS_ACCESS_KEY_ID,
-      secretAccessKey: configDetails.AWS_SECRET_ACCESS_KEY,
-      region: configDetails.region,
+      accessKeyId: AWS_ACCESS_KEY_ID,
+      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      region: AWS_REGION,
     });
   }
 
@@ -373,4 +371,4 @@ class helper {
   }
 }
 
-module.exports = helper;
+export default helper;

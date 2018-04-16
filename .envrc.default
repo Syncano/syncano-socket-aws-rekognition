@@ -1,8 +1,10 @@
+export SYNCANO_AUTH_KEY=
+export SYNCANO_INSTANCE_NAME=
 export AWS_ACCESS_KEY_ID=
 
 export AWS_SECRET_ACCESS_KEY=
 
-export region=
+export AWS_REGION=
 
 export bucketName=
 
@@ -10,6 +12,5 @@ export randomImage=
 export uploadedImage= should be an image URL 
 export moderationImage=
 export celebritiesImage=
-
 
 export invalidUrl=
